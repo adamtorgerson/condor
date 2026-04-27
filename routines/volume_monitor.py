@@ -71,7 +71,7 @@ async def run(config: Config, context: ContextTypes.DEFAULT_TYPE) -> str:
                     max_records=1
                 )
                 current_volume = candles[0].get("volume")
-                candle_time = datetime.date.fromtimestamp(candles[0].get("timestamp"))
+                candle_time = datetime.datetime.fromtimestamp(candles[0].get("timestamp"))
                 if not current_volume:
                     await asyncio.sleep(config.interval_sec)
                     continue
@@ -96,14 +96,13 @@ async def run(config: Config, context: ContextTypes.DEFAULT_TYPE) -> str:
                     thresh_esc = escape_markdown_v2(config.threshold_vol)
                     price_esc = escape_markdown_v2(f"${current_price:,.2f}")
                     volume_esc = escape_markdown_v2(f"{current_volume:.2f}")
-                    time_esc = escape_markdown_v2(candle_time)
+                    time_esc = escape_markdown_v2(candle_time.strftime("%H:%M:%S"))
                     
                     try:
                         await context.bot.send_message(
                             chat_id=chat_id,
                             text=(
-                                f"Volume *{pair_esc} Alert `{thresh_esc}`*\n"
-                                f"Volume: `{volume_esc}`\n"
+                                f"Volume *{pair_esc}* `{volume_esc}`\n"
                                 f"Candle Time: `{time_esc}`\n"
                                 f"Price: `{price_esc}`"
                             ),
